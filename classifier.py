@@ -94,7 +94,6 @@ for idx, file in enumerate(files):
     test_images_list.append(images_list)
 
 test_data = []
-print("----------")
 
 
 def test_processing(idx, file):

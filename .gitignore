@@ -16,8 +16,8 @@ eggs/
 .eggs/
 .idea/
 dataset/
-*.jpg/
-*.png/
+*.jpg
+*.png
 lib/
 lib64/
 parts/
