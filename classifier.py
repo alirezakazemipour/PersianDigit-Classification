@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 import os
 import random
-from skimage import feature
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
@@ -12,9 +11,6 @@ from concurrent import futures
 train_dir = './digit_dataset/train/'
 train_labels = []
 train_images_list = []
-
-numPoints = 28
-radius = 3
 
 files = os.listdir(train_dir)
 files.sort()
@@ -34,12 +30,7 @@ def train_processing(idx, file):
 
     for addr in train_images_list[idx]:
         I = cv2.imread(os.path.join(train_dir + file, addr))
-        I = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
-        lbp = feature.local_binary_pattern(I, numPoints, radius)
-        # (H, hogImage_train) = feature.hog(I, orientations=9, pixels_per_cell=(8, 8),
-        #                                   cells_per_block=(2, 2), transform_sqrt=True, block_norm="L1",
-        #                                   visualize=True)
-        temp.append(lbp.ravel())
+        temp.append(I.ravel())
     return temp
 
 
@@ -102,12 +93,7 @@ def test_processing(idx, file):
 
     for addr in test_images_list[idx]:
         J = cv2.imread(os.path.join(test_dir + file, addr))
-        J = cv2.cvtColor(J, cv2.COLOR_BGR2GRAY)
-        K = feature.local_binary_pattern(J, numPoints, radius)
-        # (T, hogImage_test) = feature.hog(J, orientations=9, pixels_per_cell=(8, 8),
-        #                                  cells_per_block=(2, 2), transform_sqrt=True, block_norm="L1",
-        #                                  visualize=True)
-        temp.append(K.ravel())
+        temp.append(J.ravel())
     return temp
 
 
