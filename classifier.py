@@ -51,9 +51,9 @@ C = np.logspace(-5, 0, 6)
 
 
 def grid_search(C):
-    print("Grid search started...")
+    print(f"Grid search started for parameter:{C}...")
     param_grid = dict(C=[C])
-    grid = GridSearchCV(LogisticRegression(), param_grid=param_grid, cv=cv)
+    grid = GridSearchCV(LogisticRegression(max_iter=200, solver="lbfgs"), param_grid=param_grid, cv=cv)
     grid.fit(train_data, train_labels)
     return grid.best_params_, grid.best_score_
 
@@ -67,9 +67,8 @@ with futures.ProcessPoolExecutor() as executor:
             max_score = result[1]
             c = result[0]['C']
 
-classifier = LogisticRegression(C=c)
+classifier = LogisticRegression(C=c, max_iter=200, solver="lbfgs")
 classifier.fit(train_data, train_labels)
-
 
 test_dir = './digit_dataset/test/'
 files = os.listdir(test_dir)
