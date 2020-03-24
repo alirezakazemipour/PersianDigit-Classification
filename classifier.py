@@ -5,7 +5,7 @@ import random
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
 from concurrent import futures
 
 train_dir = './digit_dataset/train/'
@@ -47,27 +47,27 @@ train_data = scaler.fit_transform(train_data)
 cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 max_score = 0
 
-n_neighbors = np.arange(1, 11)
+C = np.logspace(-5, 0, 6)
 
 
-def grid_search(n_neighbors):
+def grid_search(C):
     print("Grid search started...")
-    param_grid = dict(n_neighbors=[n_neighbors])
-    grid = GridSearchCV(KNeighborsClassifier(), param_grid=param_grid, cv=cv)
+    param_grid = dict(C=[C])
+    grid = GridSearchCV(LogisticRegression(), param_grid=param_grid, cv=cv)
     grid.fit(train_data, train_labels)
     return grid.best_params_, grid.best_score_
 
 
 with futures.ProcessPoolExecutor() as executor:
-    results = executor.map(grid_search, n_neighbors)
+    results = executor.map(grid_search, C)
 
     for result in results:
         print(f"Parameters are {result[0]} with a score of {result[1] * 100: 3.3f} %")
         if result[1] > max_score:
             max_score = result[1]
-            n_neighbor = result[0]['n_neighbors']
+            c = result[0]['C']
 
-classifier = KNeighborsClassifier(n_neighbors=n_neighbor)
+classifier = LogisticRegression(C=c)
 classifier.fit(train_data, train_labels)
 
 
