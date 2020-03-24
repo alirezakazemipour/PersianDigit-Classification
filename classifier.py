@@ -47,7 +47,7 @@ train_data = scaler.fit_transform(train_data)
 cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 max_score = 0
 
-C = np.logspace(-5, 0, 6)
+C = np.logspace(-8, 0, 9)
 
 
 def grid_search(C):
