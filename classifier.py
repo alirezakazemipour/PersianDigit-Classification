@@ -5,7 +5,7 @@ import random
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
 from concurrent import futures
 
 train_dir = './digit_dataset/train/'
@@ -47,27 +47,29 @@ train_data = scaler.fit_transform(train_data)
 cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 max_score = 0
 
-C = np.logspace(-8, 0, 9)
+n_estimators = np.arange(10, 150, step=20)
+lrs = np.logspace(-5, 3, 9)
 
 
-def grid_search(C):
-    print(f"Grid search started for parameter:{C}...")
-    param_grid = dict(C=[C])
-    grid = GridSearchCV(LogisticRegression(max_iter=200, solver="lbfgs"), param_grid=param_grid, cv=cv)
+def grid_search(n_estimators, lrs):
+    print(f"Grid search started for parameter:{n_estimators, lrs}...")
+    param_grid = dict(n_estimators=[n_estimators], learning_rate=[lrs])
+    grid = GridSearchCV(AdaBoostClassifier(algorithm="SAMME.R"), param_grid=param_grid, cv=cv)
     grid.fit(train_data, train_labels)
     return grid.best_params_, grid.best_score_
 
 
 with futures.ProcessPoolExecutor() as executor:
-    results = executor.map(grid_search, C)
+    results = executor.map(grid_search, n_estimators, lrs)
 
     for result in results:
         print(f"Parameters are {result[0]} with a score of {result[1] * 100: 3.3f} %")
         if result[1] > max_score:
             max_score = result[1]
-            c = result[0]['C']
+            n_estimator = result[0]['n_estimators']
+            lr = result[0]["learning_rate"]
 
-classifier = LogisticRegression(C=c, max_iter=200, solver="lbfgs")
+classifier = AdaBoostClassifier(n_estimators=n_estimator, learning_rate=lr, algorithm="SAMME.R")
 classifier.fit(train_data, train_labels)
 
 test_dir = './digit_dataset/test/'
