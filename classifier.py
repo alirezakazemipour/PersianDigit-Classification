@@ -5,7 +5,7 @@ import random
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from concurrent import futures
 
 train_dir = './digit_dataset/train/'
@@ -48,28 +48,28 @@ cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 max_score = 0
 
 n_estimators = np.arange(100, 200, step=20)
-lrs = np.logspace(-1, 0, 5)[::-1]
+lrs = np.logspace(-4, 0, 5)
 
 
-def grid_search(n_estimators, lrs):
-    print(f"Grid search started for parameter:{n_estimators, lrs}...")
-    param_grid = dict(n_estimators=[n_estimators], learning_rate=[lrs])
-    grid = GridSearchCV(AdaBoostClassifier(algorithm="SAMME.R"), param_grid=param_grid, cv=cv)
-    grid.fit(train_data, train_labels)
-    return grid.best_params_, grid.best_score_
+# def grid_search(n_estimators, lrs):
+#     print(f"Grid search started for parameter:{n_estimators, lrs}...")
+#     param_grid = dict(n_estimators=[n_estimators], learning_rate=[lrs])
+#     grid = GridSearchCV(GradientBoostingClassifier(), param_grid=param_grid, cv=cv)
+#     grid.fit(train_data, train_labels)
+#     return grid.best_params_, grid.best_score_
+#
+#
+# with futures.ProcessPoolExecutor() as executor:
+#     results = executor.map(grid_search, n_estimators, lrs)
+#
+#     for result in results:
+#         print(f"Parameters are {result[0]} with a score of {result[1] * 100: 3.3f} %")
+#         if result[1] > max_score:
+#             max_score = result[1]
+#             n_estimator = result[0]['n_estimators']
+#             lr = result[0]["learning_rate"]
 
-
-with futures.ProcessPoolExecutor() as executor:
-    results = executor.map(grid_search, n_estimators, lrs)
-
-    for result in results:
-        print(f"Parameters are {result[0]} with a score of {result[1] * 100: 3.3f} %")
-        if result[1] > max_score:
-            max_score = result[1]
-            n_estimator = result[0]['n_estimators']
-            lr = result[0]["learning_rate"]
-
-classifier = AdaBoostClassifier(n_estimators=n_estimator, learning_rate=lr, algorithm="SAMME.R")
+classifier = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1)
 classifier.fit(train_data, train_labels)
 
 test_dir = './digit_dataset/test/'
