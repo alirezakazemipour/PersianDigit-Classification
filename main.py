@@ -8,6 +8,8 @@ from concurrent import futures
 import numpy as np
 from sklearn.svm import SVC
 import cv2
+from keras.models import Model
+from matplotlib import pyplot as plt
 
 train_dir = './digit_dataset/train/'
 train_labels = []
@@ -24,6 +26,13 @@ for idx, file in enumerate(files):
 
 train_data = []
 model.layers.pop()
+model.layers.pop()
+model.layers.pop()
+model.layers.pop()
+# model.summary()
+# print(model.layers[-1].output.shape)
+model = Model(inputs=model.input, outputs=[model.layers[2].output])
+# exit(0)
 indices = np.arange(len(train_images_list))
 
 for idx, file in zip(indices, files):
@@ -32,14 +41,21 @@ for idx, file in zip(indices, files):
         I = I / 255.0
         I = np.expand_dims(I, 0)
         F = model.predict(I)
+        plt.figure()
+        for i in range(1, 1 + 48):
+            plt.subplot(6, 8, i)
+            plt.imshow(F[0, :, :, i - 1], cmap="gray")
+            plt.axis("off")
+        plt.savefig("figure.png")
+        plt.close("all")
         F = np.reshape(F, -1)
         train_data.append(F)
 
 scaler = StandardScaler()
 X = scaler.fit_transform(train_data)
 
-C_range = np.logspace(-2, 6, 13)
-gamma_range = np.logspace(-7, 1, 13)
+C_range = np.logspace(-2, 6, 9)
+gamma_range = np.logspace(-7, 1, 9)
 cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 
 max_score = 0
