@@ -1,9 +1,13 @@
 import numpy as np
-import cv2
 import os
 import random
 from sklearn.preprocessing import StandardScaler
 from train_and_test import Classifier
+
+classifier_type = "random_forest"  # "linear_svm", "rbf_svm", "knn", "random_forest
+feature_type = "hog_and_lbp"  # "raw_pixels", "hog", "lbp", "hog_and_lbp"
+
+classifier = Classifier(classifier_type=classifier_type, feature_type=feature_type)
 
 train_dir = './digit_dataset/train/'
 train_labels = []
@@ -18,16 +22,14 @@ for idx, file in enumerate(files):
     train_labels.extend([idx for _ in range(len(os.listdir(train_dir + file)))])
     train_images_list.append(images_list)
 
-classifier = Classifier()
-
 print("------------Feature extraction for train data set------------")
 train_data = classifier.extract_features(dir=train_dir, images_list=train_images_list, files=files)
+print("------------End of extraction--------------------------------")
 
 scaler = StandardScaler()
 train_data = scaler.fit_transform(train_data)
 
 classifier.train(train_data, train_labels)
-
 
 test_dir = './digit_dataset/test/'
 files = os.listdir(test_dir)
@@ -44,6 +46,7 @@ for idx, file in enumerate(files):
 
 print("------------Feature extraction for test data set------------")
 test_data = classifier.extract_features(dir=test_dir, images_list=test_images_list, files=files)
+print("------------End of extraction-------------------------------")
 
 print("------------Prediction on test data-------------")
 
