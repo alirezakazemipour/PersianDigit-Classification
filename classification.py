@@ -4,8 +4,8 @@ import random
 from sklearn.preprocessing import StandardScaler
 from train_and_test import Classifier
 
-classifier_type = "random_forest"  # "linear_svm", "rbf_svm", "knn", "random_forest
-feature_type = "hog_and_lbp"  # "raw_pixels", "hog", "lbp", "hog_and_lbp"
+classifier_type = "linear_svm"  # "linear_svm", "rbf_svm", "knn", "random_forest
+feature_type = "raw_pixels"  # "raw_pixels", "hog", "lbp", "hog_and_lbp"
 
 classifier = Classifier(classifier_type=classifier_type, feature_type=feature_type)
 
