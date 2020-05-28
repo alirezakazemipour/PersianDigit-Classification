@@ -27,13 +27,28 @@ def processing(feature_type, dir, images_list, idx, file):
             temp.append(I.ravel())
 
         elif feature_type == "hog":
-            pass
+            I = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
+            (H, _) = feature.hog(I, orientations=9, pixels_per_cell=(8, 8),
+                                 cells_per_block=(2, 2), transform_sqrt=True, block_norm="L1",
+                                 visualize=True)
+            temp.append(H)
 
         elif feature_type == "lbp":
-            pass
+            I = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
+            numPoints = 28
+            radius = 3
+            lbp = feature.local_binary_pattern(I, numPoints, radius)
+            temp.append(lbp.ravel())
 
         elif feature_type == "hog_and_lbp":
-            pass
+            I = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
+            numPoints = 28
+            radius = 3
+            lbp = feature.local_binary_pattern(I, numPoints, radius)
+            (H, _) = feature.hog(I, orientations=9, pixels_per_cell=(8, 8),
+                                 cells_per_block=(2, 2), transform_sqrt=True, block_norm="L1",
+                                 visualize=True)
+            temp.append(np.hstack([H, lbp.ravel()]))
 
     return temp
 
@@ -106,8 +121,8 @@ def train(classifier_type, train_data, train_labels):
 
 
 start_time = time.time()
-classifier_type = "linear_svm"  # "linear_svm", "rbf_svm", "knn", "random_forest
-feature_type = "raw_pixels"  # "raw_pixels", "hog", "lbp", "hog_and_lbp"
+classifier_type = "random_forest"  # "linear_svm", "rbf_svm", "knn", "random_forest
+feature_type = "hog_and_lbp"  # "raw_pixels", "hog", "lbp", "hog_and_lbp"
 
 train_dir = './digit_dataset/train/'
 train_labels = []
