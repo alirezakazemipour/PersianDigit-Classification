@@ -11,8 +11,10 @@ from sklearn.model_selection import GridSearchCV
 from skimage import feature
 import numpy as np
 import os
+import time
 
 cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
+
 
 def processing(feature_type, dir, images_list, idx, file):
     print("Processing: " + file)
@@ -103,6 +105,7 @@ def train(classifier_type, train_data, train_labels):
     return clf.fit(train_data, train_labels)
 
 
+start_time = time.time()
 classifier_type = "linear_svm"  # "linear_svm", "rbf_svm", "knn", "random_forest
 feature_type = "raw_pixels"  # "raw_pixels", "hog", "lbp", "hog_and_lbp"
 
@@ -168,3 +171,5 @@ print('predictions: ', results)
 print("train labels: ", list(set(train_labels)))
 print("test labels: ", test_labels)
 print("Accuracy: ", (np.sum(results == test_labels) / len(results)) * 100, "%")
+
+print("Duration:{:.1f}".format(time.time()-start_time))
