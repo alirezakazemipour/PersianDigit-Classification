@@ -51,7 +51,7 @@ print("------------End of extraction--------------------------------")
 scaler = StandardScaler()
 train_data = scaler.fit_transform(train_data)
 
-classifier = SVC(C=0.1, kernel="linear")
+classifier = SVC(C=1e+3, gamma=1e-4)
 classifier.fit(train_data, train_labels)
 
 test_dir = './digit_dataset/test/'

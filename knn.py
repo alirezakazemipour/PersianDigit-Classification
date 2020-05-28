@@ -3,7 +3,8 @@ from sklearn.preprocessing import StandardScaler
 from concurrent import futures
 import cv2
 from functools import partial
-from sklearn.svm import SVC
+# Add to your imports
+from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 import os
 
@@ -51,7 +52,7 @@ print("------------End of extraction--------------------------------")
 scaler = StandardScaler()
 train_data = scaler.fit_transform(train_data)
 
-classifier = SVC(C=0.1, kernel="linear")
+classifier = KNeighborsClassifier(n_neighbors=1)
 classifier.fit(train_data, train_labels)
 
 test_dir = './digit_dataset/test/'

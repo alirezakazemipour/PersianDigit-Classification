@@ -119,8 +119,6 @@ def train(classifier_type, train_data, train_labels):
 
     return clf.fit(train_data, train_labels)
 
-
-start_time = time.time()
 classifier_type = "random_forest"  # "linear_svm", "rbf_svm", "knn", "random_forest
 feature_type = "hog_and_lbp"  # "raw_pixels", "hog", "lbp", "hog_and_lbp"
 
@@ -175,16 +173,4 @@ print("train labels: ", list(set(train_labels)))
 print("test labels: ", test_labels)
 print("Accuracy: ", (np.sum(results == test_labels) / len(results)) * 100, "%")
 
-print("------------Prediction on train data-------------")
 
-idx = [random.randint(0, len(train_data) - 1) for i in range(10)]
-test_input = [train_data[i] for i in idx]
-test_labels = [train_labels[i] for i in idx]
-test_input = scaler.fit_transform(test_input)
-results = classifier.predict(test_input)
-print('predictions: ', results)
-print("train labels: ", list(set(train_labels)))
-print("test labels: ", test_labels)
-print("Accuracy: ", (np.sum(results == test_labels) / len(results)) * 100, "%")
-
-print("Duration:{:.1f}".format(time.time()-start_time))
